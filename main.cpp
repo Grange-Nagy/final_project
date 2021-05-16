@@ -12,8 +12,7 @@
 
 #define RESOLUTION_X 800
 #define FOV_X 1.5708                //90 degrees in radians
-#define FOV_Y 1.7708                //90 degrees in radians
-//#define FOV_Y 1.02974               //60 degrees in radians
+#define FOV_Y 1.02974               //60 degrees in radians
 #define SCREEN_ASPECT_RATIO 16/9    //shouldn't matter
 #define FOCAL_LENGTH 3              //shouldn't matter
 #define TEXT_ASPECT_RATIO 0.5       //seems accurate for cmd.exe default font
@@ -136,9 +135,9 @@ char drawRay(   Vector3 rayOrigin,
 
 int main(){
 
-    Object object("kermit.obj");
+    Object object("utah.obj");
     
-    Vector3 cameraOrigin(0,0,20);
+    Vector3 cameraOrigin(0,0,10);
 
     //CAMERA CAN ONLY LOOK DOWN THE Z AXIS BACKWARDS, mirrored x on if positive
     //this saves having to handle rotations of the camera
