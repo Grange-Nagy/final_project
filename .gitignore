@@ -1,4 +1,6 @@
 *.exe
 *.mtl
-*.obj
 *.vscode
+*.blend
+*.blend1
+tempCodeRunnerFile.cpp
