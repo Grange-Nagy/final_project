@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <math.h>
 
 struct Vector3{
 
@@ -19,44 +20,55 @@ struct Vector3{
     }
 
     Vector3 operator+(const Vector3& toAdd){
-        return Vector3( this->x + toAdd.x,
-                        this->y + toAdd.y,
-                        this->z + toAdd.z);
+        return Vector3( x + toAdd.x,
+                        y + toAdd.y,
+                        z + toAdd.z);
     }
 
     Vector3 operator-(const Vector3& toSub){
-        return Vector3( this->x - toSub.x,
-                        this->y - toSub.y,
-                        this->z - toSub.z);
+        return Vector3( x - toSub.x,
+                        y - toSub.y,
+                        z - toSub.z);
     }
 
     Vector3 operator*(const double& toMulti){
-        return Vector3( this->x * toMulti,
-                        this->y * toMulti,
-                        this->z * toMulti);
+        return Vector3( x * toMulti,
+                        y * toMulti,
+                        z * toMulti);
     }
 
     Vector3 crossProduct(Vector3 b){
-        return Vector3( (this->y * b.z) - (this->z * b.y),
-                        (this->z * b.x) - (this->x * b.z),
-                        (this->x * b.y) - (this->y * b.x));
+        return Vector3( (y * b.z) - (z * b.y),
+                        (z * b.x) - (x * b.z),
+                        (x * b.y) - (y * b.x));
     }
 
     double dotProduct(Vector3 b){
-        return (this->x * b.x) + (this->y * b.y) + (this->z * b.z);
+        return (x * b.x) + (y * b.y) + (z * b.z);
     }
 
     double distance(Vector3 b){
-        return sqrt(pow((this->x - b.x),2) +
-                    pow((this->y - b.y),2) +
-                    pow((this->z - b.z),2));
+        return sqrt(pow((x - b.x),2) +
+                    pow((y - b.y),2) +
+                    pow((z - b.z),2));
     }
 
     Vector3 vectorTo(Vector3 b){
-        return Vector3( b.x - this->x,
-                        b.y - this->y,
-                        b.z - this->z);
+        return Vector3( b.x - x,
+                        b.y - y,
+                        b.z - z);
 
+    }
+
+    void rotateAboutY(double radians){
+        double tempX = (x * cos(radians)) + (z * sin(radians));
+        double tempY = y;
+        double tempZ = (-x * sin(radians)) + (z * cos(radians));
+
+        x = tempX;
+        y = tempY;
+        z = tempZ;
+        return;
     }
 
 };

@@ -32,6 +32,14 @@ struct Face{
     }
 
 
+    void recalculateCenter(){
+        center = Vector3(   (v1->x + v2->x + v3->x) / 3,
+                            (v1->y + v2->y + v3->y) / 3,
+                            (v1->z + v2->z + v3->z) / 3);
+        return;
+    }
+
+
 };
 
 class Object{
@@ -129,4 +137,27 @@ public:
     std::vector<Face> getFaceList(){
         return faceList;
     }
+
+    //rotate object about the Y axis 
+    void rotateAboutY(double radians, bool rotateNormals){
+
+        for(Vector3& vertex: vertexList){
+
+            vertex.rotateAboutY(radians);
+            
+        }
+        if(rotateNormals){
+            for(Vector3& normal: normalList){
+                normal.rotateAboutY(radians);
+            
+            }
+        }
+
+        for(Face& face: faceList){
+                face.recalculateCenter();
+            
+        }
+
+    }
+
 };
