@@ -45,15 +45,13 @@ struct Face{
 class Object{
 
 private:
-    std::string name;
+    
     std::vector<Vector3> vertexList;
     std::vector<Vector3> normalList;
     std::vector<Face> faceList;
 
-
-
 public:
-
+    std::string name;
     int numFaces;
 
     //create object from .obj file with trianglarized mesh

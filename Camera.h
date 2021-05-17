@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <math.h>
 #include <tuple>
 #include <algorithm>
@@ -11,16 +10,12 @@
 #include "Vector3.h"
 #include "Object.h"
 
-#ifdef _WIN32
-#include "Windows.h"
-#endif
-
 #define SUN_VECTOR 0.17609, 0.440225, 0.880451  //normalized
 
 #define FOV_X 1.5708                //90 degrees in radians
 #define FOV_Y 1.02974               //60 degrees in radians
 #define SCREEN_ASPECT_RATIO 16/9    //shouldn't matter
-#define FOCAL_LENGTH 3              //shouldn't matter
+#define FOCAL_LENGTH 3              //shouldn't matter, if really small causes floating point issues
 #define TEXT_ASPECT_RATIO 0.5       //seems accurate for cmd.exe default font
 
 
@@ -69,10 +64,8 @@ private:
             return false;
         // At this stage we can compute t to find out where the intersection point is on the line.
         // this doesn't matter too much and not doing it saves a dot product
-        #ifndef HANDLE_EDGES
         return true;
-        #endif
-        #ifdef HANDLE_EDGES
+        /*
         double t = f * edge2.dotProduct(q);
         if (t > EPSILON) // ray intersection
         {
@@ -81,7 +74,7 @@ private:
         }
         else // This means that there is a line intersection but not a ray intersection.
             return true;
-        #endif
+        */
         
     }
 
@@ -92,6 +85,7 @@ private:
         //both the normal and globalLight vectors should be normalized
         Vector3 globalLight(SUN_VECTOR);
 
+        //smaller character palette seems to look nicer at small font sizes
         #ifndef MORE_SHADES
         std::string shades =  ".:-=+*#%@";
         #endif
