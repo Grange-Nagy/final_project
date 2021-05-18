@@ -85,7 +85,7 @@ private:
         //both the normal and globalLight vectors should be normalized
         Vector3 globalLight(SUN_VECTOR);
 
-        //smaller character palette seems to look nicer at small font sizes
+        //smaller character palette seems to look nicer at all font sizes
         #ifndef MORE_SHADES
         std::string shades =  ".:-=+*#%@";
         #endif

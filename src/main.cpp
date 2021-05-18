@@ -2,6 +2,7 @@
 #include <string>
 #include <time.h>
 #include <sstream>
+#include <exception>
 #include "Vector3.h"
 #include "Object.h"
 #include "Camera.h"
@@ -12,6 +13,9 @@
 #endif
 
 #define PI 3.14159265358979323846
+
+#define USAGE_STRING "Usage:\n./execute OBJ_FILEPATH [-h,--help] [-r, --resolution=OUTPUT_CHAR_WIDTH] [-n, --no-update-normals]\n\t[-a, --animate=?FRAMES_TO_RENDER ROTATIONS_PER_SECOND] [-d, --distance=CAMERA_DISTANCE_FROM_ORIGIN]"
+
 
 #ifdef _WIN32
 //windows only function to move the console cursor
@@ -27,17 +31,13 @@ void setCursorPosition(int x, int y)
 
 
 
-//build with g++ main.cpp -static-libstdc++ -static-libgcc -Ofast -o CLIraytracer
+//portable windows build with g++ main.cpp -static-libstdc++ -static-libgcc -Ofast -o CLIraytracer
+//normal g++ main.cpp -Ofast -o CLIraytracer
 int main(int argc, char** argv){
 
+    //check if enough arguments
     if(argc < 2 || argv[1][0] == '-'){
-        std::cerr <<"Usage: " << argv[0] << " <obj file> (needs to be triangularized with good normals)\n"
-                    "Optional commandline args:\n"
-                    "This menu                                                  -h/-u or --help/--usage\n"
-                    "For x resolution                                           -r or --resolution <int>\n"
-                    "If animation, (optional) frames and rotations per second   -a or --animate ?<int> <double>\n"
-                    "Distance from obj                                          -d or --distance <int>\n"
-                    "If normals shouldn't be updated                            -n or --dontupdatenormals" << std::endl;
+        std::cout << USAGE_STRING << std::endl;
         return 1;
     }
 
@@ -50,18 +50,12 @@ int main(int argc, char** argv){
     int distance = 10;
     bool updateNormals = true;
 
+    //parse optional command line arguments
     for(int i=2; i<argc; i++){
         std::string token(argv[i]);
 
-        if(token == "-u" || token == "-h" || token == "--help" || token == "-usage"){
-            std::cerr <<"Usage: " << argv[0] << " <obj file> (needs to be triangularized with good normals)\n"
-                        "Works much better with a smaller font with aspect ratio close to 0.5:\n"
-                        "Optional commandline args:\n"
-                        "This menu                                                  -h/-u or --help/--usage\n"
-                        "For x resolution                                           -r or --resolution <int>\n"
-                        "If animation, (optional) frames and rotations per second   -a or --animate ?<int> <double>\n"
-                        "Distance from obj                                          -d or --distance <int>\n"
-                        "If normals shouldn't be updated                            -n or --dontupdatenormals" << std::endl;
+        if(token == "-h" || token == "--help"){
+            std::cout << USAGE_STRING << std::endl;
             return 1;
         }
 
@@ -88,16 +82,18 @@ int main(int argc, char** argv){
             i++;        //skip over arg
             continue;
         }
-        if(token == "-n" || token == "--dontupdatenormals"){
+        if(token == "-n" || token == "--no-update-normals"){
             updateNormals = false;
             continue;
         }
 
     }
     
+    //load object
     Object object(filepath);
     
     Vector3 cameraOrigin(0,0,distance);
+    //camera needs to be looking down the Z axis
     Vector3 cameraDirection(0,0,-1);
     Camera camera(x_resolution, cameraOrigin,cameraDirection);
 
@@ -106,7 +102,7 @@ int main(int argc, char** argv){
 
     std::cout << std::endl;     //extra newline
     
-    //only render one fram if not animated
+    //only render one frame if not animated
     if(!isAnimated){
         frameCount = 1;
     }
@@ -118,7 +114,7 @@ int main(int argc, char** argv){
         object.rotateAboutY((2*PI)/frameCount, updateNormals);
     }
 
-    //exit application if not animated
+    //exit application after render if not animated
     if(!isAnimated){
         return 0;
     }
@@ -130,12 +126,12 @@ int main(int argc, char** argv){
     system("cls");
     #endif
     int i = 0;
-    //needs to be exited with a keyboard interrupt 
+    //needs to be exited with a keyboard interrupt while animating
     while(true){
 
         //start the clock before the print so that frame times are not dependent on i/o speed
-        clock_t time_end;
-        time_end = clock() + msFrameTime * CLOCKS_PER_SEC/1000;   
+        clock_t frame_end;
+        frame_end = clock() + msFrameTime * CLOCKS_PER_SEC/1000;   
 
         std::cout << frames[i]; //print the frame
         
@@ -143,19 +139,14 @@ int main(int argc, char** argv){
         //on windows move the cursor instead of clearing to prevent flickering because of insanely slow cmd i/o
         setCursorPosition(0,0);
         #else
-        //clears the console on unix systems
+        //clears the console on unix systems with escape codes
         std::cout << "\e[1;1H\e[2J";
         #endif      
 
-        while (clock() < time_end){}    //this locks the thread
+        while (clock() < frame_end){}    //this locks the thread
         
         i = (i+1)%frameCount;   //loops animation
     }
-
-    #ifdef _WIN32
-    //animation loop does not clear on windows
-    system("cls");
-    #endif
 
     
     return 0;
