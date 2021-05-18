@@ -1,21 +1,19 @@
 #include <iostream>
 #include <string>
 #include <time.h>
+#include <sstream>
 #include "Vector3.h"
 #include "Object.h"
 #include "Camera.h"
 
 
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
 #include <unistd.h>
 #endif
 
 #define PI 3.14159265358979323846
-#define ROTATIONS_PER_SECOND 0.5
-#define FRAMES 120
 
 #ifdef _WIN32
 //windows only function to move the console cursor
@@ -27,34 +25,108 @@ void setCursorPosition(int x, int y)
     SetConsoleCursorPosition(hOut, coord);
 }
 #endif
-/*
-TODO: add commandline args for x resolution -r 800,
-animation frames and rotations per second   -a 24 0.5,
-                         distance from obj  -d 4,
-            if normals shouldn't be updated -n
 
-*/
-//build with g++ main.cpp -Ofast -o optimized
-int main(){
-    Object object("mole.obj");
+
+
+
+//build with g++ main.cpp -static-libstdc++ -static-libgcc -Ofast -o CLIraytracer
+int main(int argc, char** argv){
+
+    if(argc < 2 || argv[1][0] == '-'){
+        std::cerr <<"Usage: " << argv[0] << " <obj file> (needs to be triangularized with good normals)\n"
+                    "Optional commandline args:\n"
+                    "This menu                                                  -h/-u or --help/--usage\n"
+                    "For x resolution                                           -r or --resolution <int>\n"
+                    "If animation, (optional) frames and rotations per second   -a or --animate ?<int> <double>\n"
+                    "Distance from obj                                          -d or --distance <int>\n"
+                    "If normals shouldn't be updated                            -n or --dontupdatenormals" << std::endl;
+        return 1;
+    }
+
+    std::string filepath(argv[1]);
+
+    int x_resolution = 100;
+    bool isAnimated = false;
+    int frameCount = 12;
+    double rotations_per_second = 0.5;
+    int distance = 10;
+    bool updateNormals = true;
+
+    for(int i=2; i<argc; i++){
+        std::string token(argv[i]);
+
+        if(token == "-u" || token == "-h" || token == "--help" || token == "-usage"){
+            std::cerr <<"Usage: " << argv[0] << " <obj file> (needs to be triangularized with good normals)\n"
+                        "Works much better with a smaller font with aspect ratio close to 0.5:\n"
+                        "Optional commandline args:\n"
+                        "This menu                                                  -h/-u or --help/--usage\n"
+                        "For x resolution                                           -r or --resolution <int>\n"
+                        "If animation, (optional) frames and rotations per second   -a or --animate ?<int> <double>\n"
+                        "Distance from obj                                          -d or --distance <int>\n"
+                        "If normals shouldn't be updated                            -n or --dontupdatenormals" << std::endl;
+            return 1;
+        }
+
+        if(token == "-r" || token == "--resolution"){
+            x_resolution = std::stoi(argv[i+1]);
+            i++;    //skip over arg
+            continue;
+        }
+        if(token == "-a" || token == "--animate"){
+            isAnimated = true;
+            
+            //check if optional args set, make sure not at the end, these need to be evaluated in order
+            if(i+2 < argc && argv[i+1][0] != '-'){
+                frameCount = std::stoi(argv[i+1]);
+                rotations_per_second = std::stod(argv[i+2]);
+                i+=2;       //skip over args
+            }
+            
+            continue;
+        }
+
+        if(token == "-d" || token == "--distance"){
+            distance = std::stoi(argv[i+1]);
+            i++;        //skip over arg
+            continue;
+        }
+        if(token == "-n" || token == "--dontupdatenormals"){
+            updateNormals = false;
+            continue;
+        }
+
+    }
     
-    Vector3 cameraOrigin(0,0,100);
+    Object object(filepath);
+    
+    Vector3 cameraOrigin(0,0,distance);
     Vector3 cameraDirection(0,0,-1);
-    Camera camera(800, cameraOrigin,cameraDirection);
+    Camera camera(x_resolution, cameraOrigin,cameraDirection);
 
     //store each frame as a string for animation
-    std::string frames[FRAMES];
+    std::string* frames = new std::string[frameCount];
 
     std::cout << std::endl;     //extra newline
+    
+    //only render one fram if not animated
+    if(!isAnimated){
+        frameCount = 1;
+    }
+    
 
     //rotate the object by 2pi/FRAMES per render
-    for(int i = 0; i < FRAMES; i++){
+    for(int i = 0; i < frameCount; i++){
         frames[i] = camera.renderObject(object);
-        object.rotateAboutY((2*PI)/FRAMES, true);
+        object.rotateAboutY((2*PI)/frameCount, updateNormals);
+    }
+
+    //exit application if not animated
+    if(!isAnimated){
+        return 0;
     }
 
     //get the sleep time per frame in ms
-    int msFrameTime = (1000/ROTATIONS_PER_SECOND)/FRAMES;
+    int msFrameTime = (1000/rotations_per_second)/frameCount;
     #ifdef _WIN32
     //animation loop does not clear on windows
     system("cls");
@@ -78,7 +150,7 @@ int main(){
 
         while (clock() < time_end){}    //this locks the thread
         
-        i = (i+1)%FRAMES;   //loops animation
+        i = (i+1)%frameCount;   //loops animation
     }
 
     #ifdef _WIN32
