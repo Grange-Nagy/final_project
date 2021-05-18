@@ -9,8 +9,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#else
-#include <unistd.h>
 #endif
 
 #define PI 3.14159265358979323846
@@ -145,7 +143,8 @@ int main(int argc, char** argv){
         //on windows move the cursor instead of clearing to prevent flickering because of insanely slow cmd i/o
         setCursorPosition(0,0);
         #else
-        system("clear");
+        //clears the console on unix systems
+        std::cout << "\e[1;1H\e[2J";
         #endif      
 
         while (clock() < time_end){}    //this locks the thread
