@@ -17,7 +17,3 @@ g++ main.cpp -Ofast -o CLIraytracer
 ./CLIraytracer OBJ_FILEPATH [-h,--help] [-r, --resolution=OUTPUT_CHAR_WIDTH] [-n, --no-update-normals]
      [-a, --animate=?FRAMES_TO_RENDER ROTATIONS_PER_SECOND] [-d, --distance=CAMERA_DISTANCE_FROM_ORIGIN] 
 ```
-
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)

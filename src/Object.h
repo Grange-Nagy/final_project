@@ -57,11 +57,8 @@ public:
     //create object from .obj file with trianglarized mesh
     Object (std::string filepath){
         
-        std::ifstream objFile;
-        //objFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
-        try{
-        objFile.open(filepath);
-        
+        std::ifstream objFile(filepath);
+
         std::string line;
         std::string first_token;
 
@@ -129,11 +126,9 @@ public:
         }
 
         numFaces = faceList.size();
+        
         objFile.close();
-        }catch(std::ifstream::failure e){
-            std::cout << "Fatal error opening or reading from file " << e.what() << std::endl;
-            exit(-1);
-        }
+        
 
     }
 

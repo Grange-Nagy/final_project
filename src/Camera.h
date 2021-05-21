@@ -15,7 +15,7 @@
 #define FOV_X 1.5708                //90 degrees in radians
 #define FOV_Y 1.02974               //60 degrees in radians
 #define SCREEN_ASPECT_RATIO 16/9    //shouldn't matter
-#define FOCAL_LENGTH 3              //shouldn't matter, if really small causes floating point issues
+#define FOCAL_LENGTH 1              //shouldn't matter, if really small causes floating point issues
 #define TEXT_ASPECT_RATIO 0.5       //seems accurate for cmd.exe default font
 
 
@@ -83,15 +83,10 @@ private:
     char getLuminosity(Face face){
         
         //both the normal and globalLight vectors should be normalized
-        Vector3 globalLight(SUN_VECTOR);
+        static Vector3 globalLight(SUN_VECTOR);
 
         //smaller character palette seems to look nicer at all font sizes
-        #ifndef MORE_SHADES
         std::string shades =  ".:-=+*#%@";
-        #endif
-        #ifdef MORE_SHADES
-        std::string shades = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
-        #endif
         
         double dotProduct = globalLight.dotProduct(*(face.norm));
         //if there is no illumination (i.e. back side)
@@ -100,7 +95,7 @@ private:
             
         }
         if(dotProduct > 1){
-            //might happen if obj file is parsed wrong or of normals need to be recalculated
+            //might happen if obj file is parsed wrong, normals need to be recalculated, or floating point rounding errors
             //std::cout << "Dot product in getLuminosity greater than 1" << std::endl;
             return shades[shades.size()-1];
         }

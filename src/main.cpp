@@ -132,7 +132,7 @@ int main(int argc, char** argv){
         //start the clock before the print so that frame times are not dependent on i/o speed
         clock_t frame_end;
         frame_end = clock() + msFrameTime * CLOCKS_PER_SEC/1000;   
-
+        std::cout << "Ctrl+C to exit" << std::endl;                 //don't want to write cross platform keyboard input detection
         std::cout << frames[i]; //print the frame
         
         #ifdef _WIN32
