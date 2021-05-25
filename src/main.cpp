@@ -14,20 +14,7 @@
 
 #define PI 3.14159265358979323846
 
-#define USAGE_STRING "Usage:\n./execute OBJ_FILEPATH [-h,--help] [-r, --resolution=OUTPUT_CHAR_WIDTH] [-n, --no-update-normals]\n\t[-a, --animate=?FRAMES_TO_RENDER ROTATIONS_PER_SECOND] [-d, --distance=CAMERA_DISTANCE_FROM_ORIGIN]"
-
-
-#ifdef _WIN32
-//windows only function to move the console cursor
-void setCursorPosition(int x, int y)
-{
-    static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    std::cout.flush();
-    COORD coord = { (SHORT)x, (SHORT)y };
-    SetConsoleCursorPosition(hOut, coord);
-}
-#endif
-
+#define USAGE_STRING "Usage:\n./execute OBJ_FILEPATH [-h,--help] [-r, --resolution=WIDTH] [-n, --no-update-normals]\n\t[-a, --animate=?FRAMES ROTATIONS] [-d, --distance=DISTANCE]"
 
 
 
@@ -136,8 +123,11 @@ int main(int argc, char** argv){
         std::cout << frames[i]; //print the frame
         
         #ifdef _WIN32
-        //on windows move the cursor instead of clearing to prevent flickering because of insanely slow cmd i/o
-        setCursorPosition(0,0);
+        //on windows move the cursor instead of clearing to prevent flickering because of insanely slow console i/o
+        static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        std::cout.flush();
+        static const COORD coord = { (SHORT)0, (SHORT)0};
+        SetConsoleCursorPosition(hOut, coord);
         #else
         //clears the console on unix systems with escape codes
         std::cout << "\e[1;1H\e[2J";

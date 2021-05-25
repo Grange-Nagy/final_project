@@ -105,13 +105,13 @@ public:
 
                 lineStream >> temp;
                 std::stringstream token2(temp);
-                 std::getline(token2,value,'/');
+                std::getline(token2,value,'/');
                 //this will be the second vertex
                 int v2 = std::stoi(value);
 
                 lineStream >> temp;
                 std::stringstream token3(temp);
-                 std::getline(token3,value,'/');
+                std::getline(token3,value,'/');
                 //this will be the third vertex
                 int v3 = std::stoi(value);
 
