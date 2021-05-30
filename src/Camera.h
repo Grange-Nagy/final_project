@@ -1,3 +1,7 @@
+/*
+camera - class representing the camera viewport for drawing screen
+*/
+
 #pragma once
 
 #include <iostream>
@@ -19,6 +23,7 @@
 #define TEXT_ASPECT_RATIO 0.5       //seems accurate for cmd.exe default font
 
 
+//class representing the camera viewport for drawing screen
 class Camera{
 private:
 
@@ -79,7 +84,7 @@ private:
     }
 
 
-
+    //returns a character representing the brightness at a point (dot product of normal and global light)
     char getLuminosity(Face face){
         
         //both the normal and globalLight vectors should be normalized
@@ -141,7 +146,7 @@ private:
     }
 
 public:
-
+    //constructor initalizes the drawing plane
     Camera(int resolution_x, Vector3 cameraOrigin, Vector3 cameraDirection):
         cameraOrigin(cameraOrigin), cameraDirection(cameraDirection),resolution_x(resolution_x){
         //define a drawing plane made of cells that have the aspect ratio of text
@@ -158,13 +163,12 @@ public:
 
         resolution_y = floor(height/cellHeight);
     }
-
-    int getY_resolution(){
-        return resolution_y;
-    }
+    //default destuctor
+    ~Camera(){}
     
+    //render the given object as viewed through this camera
     std::string renderObject(Object object){
-        //return a copy of the frame for animation
+        //save a copy of the frame to return for animation
         std::stringstream frame;
 
         //this will be the point in space to which the vectors are drawn from the origin to the plane

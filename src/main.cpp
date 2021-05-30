@@ -1,3 +1,8 @@
+/*
+raytracer entrypoint - parse commandline arguments and handle animation
+*/
+
+
 #include <iostream>
 #include <string>
 #include <time.h>
@@ -75,9 +80,16 @@ int main(int argc, char** argv){
         }
 
     }
-    
+    //PROJECT: Exceptions
     //load object
-    Object object(filepath);
+    Object object;
+    try{
+        object.loadFile(filepath);
+    }catch(std::runtime_error &e){
+        std::cout << e.what() << std::endl;
+        std::cout << "Exiting..." << std::endl;
+        return -1;
+    }
     
     Vector3 cameraOrigin(0,0,distance);
     //camera needs to be looking down the Z axis
@@ -110,6 +122,7 @@ int main(int argc, char** argv){
     int msFrameTime = (1000/rotations_per_second)/frameCount;
     #ifdef _WIN32
     //animation loop does not clear on windows
+    //clearing the console on windows spawns a new process and takes ~50ms
     system("cls");
     #endif
     int i = 0;
@@ -123,10 +136,10 @@ int main(int argc, char** argv){
         std::cout << frames[i]; //print the frame
         
         #ifdef _WIN32
-        //on windows move the cursor instead of clearing to prevent flickering because of insanely slow console i/o
-        static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        //on windows move the cursor instead of clearing to prevent flickering because of slow windows console i/o
+        static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);     //get the console handle
         std::cout.flush();
-        static const COORD coord = { (SHORT)0, (SHORT)0};
+        static const COORD coord = { (SHORT)0, (SHORT)0};   //coordinates at top left of console
         SetConsoleCursorPosition(hOut, coord);
         #else
         //clears the console on unix systems with escape codes

@@ -1,4 +1,4 @@
-# CS151 Final Project - Raytracer
+# Command Line Raytracer
 
 Raytracer capable of rendering stills and animations of triangularized waveform .obj files on the command line  
 Should compile/run on Windows/Unix

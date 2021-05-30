@@ -1,3 +1,8 @@
+/*
+Vector3 - first principlas implementation of the common Vector3 struct
+*/
+
+
 #pragma once
 
 #include <sstream>
@@ -7,6 +12,7 @@ struct Vector3{
 
     double x,y,z;
 
+    //PROJECT: Polymorphism
     //default
     Vector3(){}
 
@@ -19,6 +25,7 @@ struct Vector3{
         line >> x >> y >> z;
     }
 
+    //PROJECT: Operator Overloading
     Vector3 operator+(const Vector3& toAdd){
         return Vector3( x + toAdd.x,
                         y + toAdd.y,
@@ -53,6 +60,7 @@ struct Vector3{
                     pow((z - b.z),2));
     }
 
+    //same as b - this
     Vector3 vectorTo(Vector3 b){
         return Vector3( b.x - x,
                         b.y - y,
@@ -60,6 +68,7 @@ struct Vector3{
 
     }
 
+    //rotate 3d point or vector about Y using hardcoded rotation matrix math
     void rotateAboutY(double radians){
         double tempX = (x * cos(radians)) + (z * sin(radians));
         double tempY = y;

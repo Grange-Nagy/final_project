@@ -1,3 +1,7 @@
+/*
+camera - class representing an object parsed from .obj files with triangularized faces, also has definition of Face
+*/
+
 #pragma once
 
 #include <vector>
@@ -54,10 +58,23 @@ public:
     std::string name;
     int numFaces;
 
+    //default constuctor
+    Object(){}
+
+    //default destuctor
+    ~Object(){}
+
+    //PROJECT: Text File I/O
     //create object from .obj file with trianglarized mesh
-    Object (std::string filepath){
+    void loadFile(std::string filepath){
         
         std::ifstream objFile(filepath);
+
+        //PROJECT: Exceptions
+        //check if file was opened successfully
+        if(!objFile){
+            throw std::runtime_error("Could not open file: " + filepath);
+        }
 
         std::string line;
         std::string first_token;
@@ -116,7 +133,7 @@ public:
                 int v3 = std::stoi(value);
 
                 //add vertices and normals by reference
-                faceList.push_back(Face(&vertexList[v1-1],  //one indexed
+                faceList.push_back(Face(&vertexList[v1-1],  //obj file faces are one indexed
                                         &vertexList[v2-1],
                                         &vertexList[v3-1],
                                         &normalList[norm]));
