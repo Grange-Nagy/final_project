@@ -3,5 +3,6 @@
 *.vscode
 *.blend
 *.blend1
-tempCodeRunnerFile.cpp
 .VSCodeCounter
+*.mp4
+*.JPG
